@@ -77,6 +77,33 @@ namespace AdddressBookRestSharpMSTest
                 Assert.AreEqual(addressBook.Firstname, dataResponse.Firstname);
             }
         }
+
+        /// <summary>
+        /// Givens the details to update when updated using put api should update the details.
+        /// </summary>
+        [TestMethod]
+        public void givenDetailsToUpdate_WhenUpdatedUsingPUTAPI_ShouldUpdateTheDetails()
+        {
+            RestRequest request = new RestRequest("/Person/3", Method.PUT);
+            //arrange
+            JObject jObjectbody = new JObject();
+            //creating a json object
+            jObjectbody.Add("Firstname","Sai");
+            jObjectbody.Add("Lastname", "Joshi");
+            jObjectbody.Add("Address", "BPL");
+            jObjectbody.Add("City", "Nagpur");
+            jObjectbody.Add("State", "Goa");
+            jObjectbody.Add("Zip", 609213);
+            jObjectbody.Add("MobileNumber", "9934508976");
+            request.AddParameter("application/json", jObjectbody, ParameterType.RequestBody);
+            //act
+            IRestResponse response = client.Execute(request);
+            //assert
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+            Person dataResponse = JsonConvert.DeserializeObject<Person>(response.Content);
+            Assert.AreEqual("Nagpur", dataResponse.City);
+            Assert.AreEqual("Goa", dataResponse.State);
+        }
     }
 }
 
