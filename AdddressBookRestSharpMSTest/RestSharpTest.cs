@@ -104,6 +104,20 @@ namespace AdddressBookRestSharpMSTest
             Assert.AreEqual("Nagpur", dataResponse.City);
             Assert.AreEqual("Goa", dataResponse.State);
         }
+
+        /// <summary>
+        /// Givens the identifier when deleting person should return ok status.
+        /// </summary>
+        [TestMethod]
+        public void givenId_WhenDeletingPerson_ShouldReturnOKStatus()
+        {
+            //arrange
+            RestRequest request = new RestRequest("/Person/3", Method.DELETE);
+            //act
+            IRestResponse response = client.Execute(request);
+            //assert
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        }
     }
 }
 
