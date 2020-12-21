@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using System.Collections.Generic;
 using System.Net;
@@ -41,7 +42,40 @@ namespace AdddressBookRestSharpMSTest
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
             //deserialize the response
             List<Person> dataResponse = JsonConvert.DeserializeObject<List<Person>>(response.Content);
-            Assert.AreEqual(1, dataResponse.Count);
+            Assert.AreEqual(3, dataResponse.Count);
+        }
+
+        /// <summary>
+        /// Givens the multiple persons when calling the postapi should return ok status.
+        /// </summary>
+        [TestMethod]
+        public void givenMultiplePersons_WhenCallingThePOSTAPI_ShouldReturnOKStatus()
+        {
+            List<Person> addressBookList = new List<Person>();
+            addressBookList.Add(new Person { Firstname = "Virat", Lastname = "Chavan", Address = "CH", City = "Nagpur", State = "Kerala", Zip = 509908, MobileNumber = "9034987656" });
+            addressBookList.Add(new Person { Firstname = "Sai", Lastname = "Joshi", Address = "BPL", City = "Gadchiroli", State = "Gos", Zip = 609213, MobileNumber = "9934508976" });
+            foreach (Person addressBook in addressBookList)
+            {
+                //arrange
+                RestRequest request = new RestRequest("/Person", Method.POST);
+                //creation of json object
+                JObject jObjectbody = new JObject();
+                jObjectbody.Add("Firstname", addressBook.Firstname);
+                jObjectbody.Add("Lastname", addressBook.Lastname);
+                jObjectbody.Add("Address", addressBook.Address);
+                jObjectbody.Add("City", addressBook.City);
+                jObjectbody.Add("State", addressBook.State);
+                jObjectbody.Add("Zip", addressBook.Zip);
+                jObjectbody.Add("PhoneNumber", addressBook.MobileNumber);
+                request.AddParameter("application/json", jObjectbody, ParameterType.RequestBody);
+                //act
+                IRestResponse response = client.Execute(request);
+                //assert
+                Assert.AreEqual(response.StatusCode, HttpStatusCode.Created);
+                //deserializing the response
+                Person dataResponse = JsonConvert.DeserializeObject<Person>(response.Content);
+                Assert.AreEqual(addressBook.Firstname, dataResponse.Firstname);
+            }
         }
     }
 }
